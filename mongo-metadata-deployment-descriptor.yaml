@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-mongodb-deployment
+  annotations:
+    kubernetes.io/change-cause: "Metadata MongoDB Deployment with version 1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metadata-mongodb
+  template:
+    metadata:
+      labels:
+        app: metadata-mongodb
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: my-mongo-pvc-sc
+      containers:
+      - name: mongodb
+        image: mongo
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+        env:
+        - name: VERSION
+          value: "1.0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: metadata-mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017

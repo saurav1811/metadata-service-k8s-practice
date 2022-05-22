@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metadata-write
+spec:
+  template:
+    spec:
+      containers:
+      - name: metadata-write-curl
+        image: appropriate/curl
+        command: ["curl",  "--header", "Content-Type: application/json", "--request", "POST", "--data", '{"group":"sauravmohapatra","name":"city","value":"Pune"}', "http://metadata-sv-np:8081/metadata"]
+      restartPolicy: Never
+  backoffLimit: 4
